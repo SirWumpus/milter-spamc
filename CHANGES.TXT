@@ -1,0 +1,1085 @@
+CHANGES
+-------
+
+The major number changes for such things as code rewrites, changes in
+syntax, and/or dramatic changes in functionality. The minor number
+changes for corrections, enhancements, etc. made to the code. There
+is no set schedule for releases.
+
+--TODO--
+
+   +	Add a common intra-milter communication cache used to pass
+	information and results between milters. Milters that work on
+	content can pass info via the headers to downstream milters,
+	but those that work only on the pre-DATA info have no method.
+
+   +	Per-user .milter-spamc.rc options to adjust reject levels and
+	header behaviour options. Consider one-to-many message makes a
+	general solution for this difficult. Requested by Barry
+	Callahan.
+
+   +	De-HTML the message to strip when considered spam to strip web
+   	tracking bugs. Save the original as an attachment. Requested by
+   	F. Vlemmings.
+
+   +	Add the X-Spam-Report to the body. Requested by many.
+
+  ++ 	filterEndMessage() : Ideally if the message is spam
+	and the sender/connection is not white listed and _some_
+	RCPTs are not white listed, then delete those RCPTs from
+	the delivery list, leaving only the white listed RCPTs
+	and possibly the spambox address.
+
+   +	Add milter/spamd SSL support. Requested by Dan Mahoney.
+
+
+--1.15--
+
+   +	Added smtp-detailed-reply to change whether SMTP replies should
+   	contain SpamAssassin score and/or report.
+
+--1.14--
+
+   +	Requires LibSnert 1.69
+
+   !	Fixed for changes to Buf API.
+
+   !	filterMail: fix bug with milter-spamc-from: whitelisting.
+   	Reported by Kenny Gardner.
+
+   -	Removed #include <com/snert/lib/io/Dns.h> and reference to
+   	DnsSetDebug. milter-spamc does not perform DNS lookups, other
+   	than those done within socket2 API when connecting to a host.
+   	Part of the PDQ API migration.
+
+   !	sample.mc.in: Removed from define(`_FFR_MILTER', `1')dnl
+
+--1.13--
+
+   !	libmilter smfi_addheader() API documentation states:
+
+	 "... To make a multi-line header, insert a line feed (ASCII
+	  0x0a, or \n in C) followed by at least one whitespace
+	  character such as a space (ASCII 0x20) or tab (ASCII 0x09,
+	  or \t in C). The line feed should NOT be preceded by a
+	  carriage return (ASCII 0x0d); the MTA will add this
+	  automatically.
+
+	Therefore \r\n have been replaced by \n when generating the
+	X-Spam-Report header. Reported by Michael Grant.
+
+   !	Changed X-Spam-Report indentation and blank line conversion.
+
+--1.12--
+
+   !	Fixed NULL_IN_BODY problem reported by SpamAssassin. Reported by
+   	Ben Lentz.
+
+
+--1.11--
+
+   +	Requires LibSnert 1.63
+
+   +	Added two new boolean options:
+
+		-always-add-flag
+		-always-add-level
+
+	that decouple the inclusion of the X-Spam-Flag and X-Spam-Level
+	headers from the spamd-command option which now only affects the
+	inclusion of X-Spam-Report header.
+
+   +	Add Return-Path: header to content passed to SpamAssassin so that
+   	tests like SPF can work. Requested by Rich Graves.
+
+   !	The Received: header supplied to SpamAssassin now uses the
+	{client_name} and {client_resolve} macros when reporting the
+	connected client details instead of the client name supplied
+	to the xxfi_connect handler, since that could be a ip-domain
+	literal. Reported by Martin Lathoud.
+
+   !	The added report header lines are now correctly terminated with
+   	CRLF instead of just LF.
+
+   !	The collection and passing of the message headers to spamd has
+   	been redone and simplfied.
+
+   !	The SPAMD protocol documentation sucks. Only by reading the
+	source do you find out that the Content-Length: header is
+	actually optional. Open source peons write crap
+	documentation. Have dropped the use of the Content-Length
+	header, because the milter cannot determine the size of the
+	message in advance.
+
+   !	Added #define for SIMPLE_JUNK_MAIL_REPLY used when not using
+   	multi-line replies. Requested by Steve Ladewig.
+
+   +	access-db now supports socket-map, flat-file, and SQLite3
+	lookups in addition to Berkeley DB. The SQLite3 behaviour
+	can be disabled via LibSnert's ./configure script.
+
+   !	Rejection based on access-db blacklisting now disabled. Some
+	users prefer leaving blacklisting upto Sendmail and not the
+	milter. Reported by Derek Balling and others.
+
+  !!	filterBody(): Fixed obsecure bug when the message content is
+	less than 20 bytes long, adding a terminating NUL to the body
+	chunk for the trace log output actually overwrote off the end
+	of a dynamic buffer on some Linux systems causing the milter
+	to crash. Reported by Martin Lathoud.
+
+   !	Reduced unnecessary log noise concerning removal of possibly
+   	none existant mail headers by adding guards before calls to
+   	smfHeaderRemove().
+
+--1.10--
+
+  !!	License 1.4 which provides additional details with regards to
+  	possible license controls used, the possibility of "phone
+  	home code" and its general contents, and related privacy
+  	statement.
+
+   +	Add check for filterOpen() got NULL socket address pointer passed to filterOpen()
+   	which inidicates an unsupported address type. The connection
+   	is simply accepted to bypass the milter.
+
+--1.9--
+
+   +	Requires LibSnert 1.61
+
+  !!	Fixed testing of Spam: result header. It appears that newer
+   	versions of SpamAssasin return "Yes", instead of "True".
+
+  !!	Complete replacement of option specification and no backwards.
+	compatibility. The newer format allows for better integration
+	of previously undocumented libsnert options and for the
+	inclusion of future enhancements.
+
+		-A	-> spamd-command=REPORT
+		-a	-> mail-archive
+		-b	-> mail-policy=copy mail-spam
+		-B	-> mail-policy=redirect mail-spam
+		-c	-> mail-ham
+		-C	-> spamd-command=CHECK
+		-d	-> extra-discard
+		-F	-> mail-policy=redirect mail-format
+		-H, -P	-> spamd-socket
+		-K	-> spamd-max-size
+		-l	-> max-untrusted
+		-L	-> is-gateway
+		-p	-> discard-low-precedence
+		-r	-> extra-reject
+		-R	-> REMOVED
+		-s	-> subject-tag
+		-S	-> subject-tag-score
+		-t	-> milter-timeout
+		-T	-> spamd-timeout
+		-u	-> spamd-user
+		-U	-> no-user-config spamd-user
+		-v	-> verbose
+		-x	-> quit
+
+  !!	There can occur an instance in Sendmail where a RCPT TO: is
+	known and rcpt_addr, rcpt_host, and rcpt_mailer are all NULL,
+	which causes a segmentation fault due to a careless redefinition
+	of confMILTER_MACROS_ENVRCPT in sendmail.mc. Reported by
+	Thomas Börnert.
+
+   -	"reject-and-deliver" patch and code dropped. It has not been
+   	maintained in a long while.
+
+   !	filterClose(): remove reporting of "null workspace error",
+	which can occur when a client connection is rejected before or
+	by filterOpen().
+
+   !	Assert that the workspace copy of the subject and several
+	flags are reset between multiple messages during the same SMTP
+	client connection.
+
+--1.8--
+
+   !	Reverted back to libmilter's default (7210s) timeout. This
+	should silence many of the reported sendmail to milter timeout
+	errors and/or broken connections caused by the milter timing
+	out sooner than sendmail does with the current SMTP client.
+	The sendmail defaults for each SMTP command and receiving the
+	message content is 1h each and so libmilter allows for 2h 10s.
+	But in theory you could be DoS for between 5 and 104 hours per
+	connection. If you want to change this then set in
+	sendmail.mc:
+
+		define(`confTO_DATABLOCK',      `30m')
+		define(`confTO_COMMAND',        `5m')
+
+--1.7--
+
+   +	Requires LibSnert 1.58
+
+   !	readline(): fixed incorrect reporting of "unexpected EOF" as an
+	error, which its not, to a normal debug dialog message which it
+	should have been.
+
+   !	spamdConnect(): a connection error now reports errno.
+
+   !	spamdConnect(): socketOpenClient() failed to connect to spamd
+	in some cases when errno was non-zero prior to the call to
+	connect(). Requires libsnert 1.58.
+
+--1.6--
+
+   +	Requires LibSnert 1.57
+
+   +	Added support for
+
+   		milter-length-auth:auth_authen		RHS
+   		milter-length-auth:			RHS
+
+   !	Switched over to using socket2 API, brings IPv6 support.
+
+
+--1.4--
+
+   +	Requires LibSnert 1.56
+
+   !	Replace one and only instance of sprintf() with snprintf().
+
+   !	Changed install.sh.in to create /var/run/mitler/ directory
+   	owned by milter:milter and change the default PID_FILE and
+   	SOCKET_FILE paths. This provides better privelage/security
+   	separation since the milters run as milter:milter.
+
+--1.3--
+
+   +	Requires LibSnert 1.53
+
+   !	Remove redundant line buffer size check in readline().
+
+   !	filterRcpt() minor change to account for LibSnert smfAccessRcpt()
+   	change to keep the old skipMessage behaviour until ready.
+
+--1.2--
+
+  !!	License change to allow for private individual/single machine
+  	license.
+
+--1.1--
+
+   !	install.sh: fix use of id -u, which doesn't work on SunOS
+
+   !	install.sh: fix use of bang (!) logical-NOT operator, which
+   	is not available in real Bourne shells or csh.
+
+   !	install.sh: SunOS grep does not have a -q option
+
+   !	install.sh: fixed "if which command ; then" tests with a
+	function. which(1) always returns success (0) on SunOS.
+
+   !	install.sh: SunOS has two different install(1) tools with
+   	different options (-o vs. -u) to set the file owner.
+
+   !	spamd report lines with a score of 0.0 are discard from the
+   	reject message, but kept for the X-Spam-Report header. Requested
+   	by Martin Lathoud.
+
+   !	The removal of previous instances of X-Spam-* headers now
+	happens after the white list check in filterEndMessage().
+	Reported by Martin Lathoud. This allows for a gateway server
+	to do spam checking and for an internal mail server to also do
+	spam checking, BUT only when the mail comes from an unknown
+	source. Without this change, the internal machine would remove
+	the X-Spam-* headers for white-listed servers.
+
+--1.0--
+
+   *	Thank you to Claudio Eichenberger again for several CDs from
+   	the wishlist.
+
+   +	Requires LibSnert 1.41
+
+   !	Fixed configure.in script to better handle Berkeley DB library
+   	and header searches. All these cases should now work.
+
+   		./configure
+   		./configure --with-db
+   		./configure --with-db=/usr/local/BerkeleyDB-4.2
+   		./configure --without-db
+
+   !	Requested by Frank Heydlauf. The behaviour of the -A option
+	has been updated to include the X-Spam-Level and X-Spam-Flag
+	headers in addition to the X-Spam-Report. When set, these
+	headers are always added to the message. The default (unset)
+	behaviour corresponds more to the way SpamAssassin behaves,
+	in which these headers are only added if the message is spam.
+
+  	The X-Spam-Status and X-Scanned-By headers are always added.
+
+   !	Changed default run user and group to be milter:milter. This
+   	is more inline with prefered security practices of assigning
+   	special processes (or process families) their own user and
+   	group. So now the recommended file permissions are:
+
+		groupadd milter
+		useradd -G smmsp -g milter milter
+
+		/etc/mail/                     ???:smmsp      	 750
+		/etc/mail/*.db  	       ???:smmsp         640
+		/var/lib/milter-spamc          milter:milter     750
+		/usr/local/sbin/milter-spamc   milter:milter     550
+
+	If the group of /etc/mail and the *.db files is something
+	other than smmsp, then the `milter' user should be a secondary
+	member of that group instead of smmsp.
+
+	On some newer Debian systems, /etc/mail is owned by smmta
+	instead of root, which is fine. A milter only needs read
+	access to the sendmail databases and configuration files.
+	Debian also leaves /etc/mail as 0766 and protects the *.db as
+	0640, which can contain sensitive information. Thats fine too.
+
+   +	When -r is used and libmilter 8.13 is present, the sender will
+	receive a multi-line response containing the spamassassin
+	report (ie. the rules triggered).
+
+   !	filterRcpt(): fixed counting of untrusted RCPT for -l option.
+   	Reported by Derek Balling.
+
+   !	Fixed the start-up script to unalias shell function names
+	before defining the function. Reported by Francisco of
+	Blackant dot Net.
+
+   !	Encapsulated announce/pass/fail output the startup-script to
+	support different OS favours; some like pretty output, some
+	like it simple.
+
+   -	configure.in: Removed gcc option -fvolatile, which is no longer
+   	supported in as of gcc 3.4.
+
+   +	The milter now starts as a background process and can kill a
+	previous instance of itself using the -x option. The -X option
+	is undocumented, but starts the application as a foreground
+	process for the purpose of debugging.
+
+   +	Added support for a /etc/mail/milter-name.cf file that can
+   	contain command-line options and an optional socket argument.
+
+   !	The socket argument is now optional.
+
+   !	The above three changes allow for a simplified startup script
+	template for use by all my milters.
+
+   +	Added -L option for local network gateway processing.
+
+   !	Fixed -K bug where 64KB (one chunk) was the limit, yet two body
+   	chunks would be processed. Sendmail/libmilter sends max. unsigned
+   	short value (65535) for a full chunk, not 65536.
+
+  !!	Updated LICENSE.TXT.
+
+
+--0.25--
+
+   +	Requires LibSnert 1.39
+
+   !	Fixed the configuration file to recognise OpenBSD. Reported by
+	Francisco of Blackant dot Net.
+
+   !	Fixed the start-up script to unalias shell function names
+	before defining the function. Reported by Francisco of
+	Blackant dot Net.
+
+--0.24--
+
+   +	Requires LibSnert 1.38
+
+   +	Bumped version to clearly indicate a new version after some
+	people got hold of pre-release work in progress.
+
+--0.23--
+
+   +	Requires LibSnert 1.37
+
+   !	Doh! Modified reject message to include the score and threshold
+   	as a float, not an integer. Reported by Martin Lathoud.
+
+   !	atExitCleanUp() now calls smdbClose() which mutex protects the
+   	call to db->close(). For the access database this is not so
+   	important, but it clearer code.
+
+   !	Re-enabled code to send EOF to spamd at the earliest possible
+   	moment, especially if we've reached the -K limit early. This
+   	appears to improve spamd performance.
+
+   !	Fix bug concerning default value of -K not being set properly.
+
+--0.22--
+
+   !	Fix off-by-one possible buffer overflow error when recording
+   	the HELO argument in fitlerHelo().
+
+   !	Modified reject message to include the score and threshold.
+   	Requested by Martin Lathoud.
+
+--0.21--
+
+   +	Add VERSION.TXT.IN to configuration for use by sendmail.shtml.
+
+   !	filterMail(): The smfAccessMail() passed the wrong default for
+	the handling of MAIL FROM:<>, which should be filtered. This
+	was correctly handled in milter-7bit and milter-date, but
+	missed in milter-spamc. Reported by Gianni Arru.
+
+   !	filterEndHeaders(): The insertion of the simulated Recieved:
+	header failed to account for the exact length of the header
+	plus the timestamp and CRLF, which would trigger some rules.
+	Patch from Ingo Herz.
+
+   !	Fix makefile ownership target to assert correct state directory
+   	permissions.
+
+--0.20--
+
+   +	Requires LibSnert 1.36 for major smdb() update to solve
+	threading issues and a possible memory corruption problem
+
+   !	Clarify right hand side values of tags for white-listing.
+	Suggested by Derek Balling.  The use of FRIEND and HATER are
+	rather particular to the Spam: tag and should not be used else
+	where (though they may be treated as synoyms for OK and
+	REJECT), as they may pose confusion for Sendmail's tags.
+
+   !	milter-spamc-from: and milter-spamc-to: must be able to
+	override lower priority tags.
+
+   !	Increase default MilterSocketTimeout to 1800s (30m) to account
+	for a long connection with multiple messages.
+
+   +	Add an instanceCount for independent tagging of log message
+	separate from the queue id.
+
+   !	vSetReply() not checks for an MI_FAILURE from smfi_setreply().
+
+   !	filterRcpt(): use of getpwnam() is not thread safe. Reported
+	by Gianni Arru.
+
+   +	Set working directory to the state directory, where is can
+	write a core file in the event of crash.
+
+   !	nullWorkSpace() now takes a `where' string to report in what
+	hook it failed.
+
+   +	Added extra debug level monitor socket file descriptors.
+
+   !	Replaced hostname and hostaddr variables by ${if_name} and
+	${if_addr} macros.
+
+   -	Removed Spam: OK tag variant.
+
+   !	Enabled by default From: and To: support.
+
+   !	Replaced some commom code shared by all my milters. See
+	libsnert Sendmail Filter API (smf).
+
+   !	Standardised the -v option across all my milters. Also support
+	textual bit names.
+
+   +	Added -K option to specify how much of the message is to be
+	passed to spamd. Previously only the first body chunk (64KB)
+	was ever passed for efficiency reasons. However some people
+	would like more of the message processed prefering accuracy
+	over speed. Requested by Derek Balling.
+
+   +	Added SocketSetNonBlocking() in filterEndMessage() before reading
+   	the response from spamd. Switches from byte at a time reads to
+   	a block read. Suggested by Alex Tkachenko. Nice catch.
+
+   ! 	Modified license.
+
+--0.19--
+
+   !	Fix broken Spam: OK and FRIEND handling. Reported by Derek Balling.
+
+   +	Added new access db tags:
+
+   		milter-spamc-from:
+   		milter-spamc-to:
+
+--0.18--
+
+   +	Requires LibSnert 1.34
+
+   !	Assorted changes related to smdbAccess* changes in LibSnert.
+
+   !	The existing -t option has been renamed to -T to make way for the
+	new -t option. The new -t option is the sendmail/milter I/O timeout
+	and -T is the milter/spamd I/O timeout.
+
+   !	SpamAssassin can be modified with custom rules to act on zero
+	length bodys, but Sendmail does not call filterBody() for zero
+	length body. Based on a patch by Alex Tkachenko.
+
+
+--0.17--
+
+   +	Requires LibSnert 1.33
+
+   +	Added access DB tag `milter-spamc-connect:' to allow a means to
+	override the `Connect:' tag B/W behavoir. The idea here is that you
+	might typically want to whitelist an connection IP or domain through
+	sendmail and all your milters, BUT on the odd occassion you may
+	still want to content filter regardless.
+
+   !	Replaced use of Mutex* API code with pthread_mutex_* API. A milter
+	by definition uses POSIX threads, so the pthread_mutex_* functions
+	should also be available. These should be faster for a threaded
+	application and never leak (subject to the OS implementation of
+	course).
+
+   !	Modified the spam=... log line to provide {client_addr} and
+	{client_name} values as well. Requested by Derek Balling. Can be
+	used by custom mail log scanners for report generation without
+	requiring any more detailed logging other than -v 1.
+
+   !	Fix install.sh to assert the file permissions of the milter in sbin.
+
+
+   !	Assorted changes related to smdbAccess* changes in LibSnert.
+
+--0.16--
+
+   +	milter-spamc.c now saves a pid file in /var/lib/milter-spamc/pid.
+   	Yes, I know I should save it in /var/run/milter-spamc.pid, but that
+   	assumes a process that runs as root all the time, since /var/run
+   	typically needs root to access and there is no guarantee that the
+   	milter starts as root. milter-spamc changes process ownership early
+   	in the process and I choose not to save the pid until just after
+   	all the setup code and before the version log lines.
+
+   +	Added -p option to turn on Precedence: list checks. Requested by
+	Derek Balling. Some people liked the old behaviour.
+
+   !	milter-spamc.sh.in: fix bug in 2nd kill attempt. Reported by
+   	Yuriy Talakan.
+
+   !	Replaced die() with a call to atExitCleanUp().
+
+   +	install.sh.in: The milter-*.mc file is copied to /etc/mail.
+
+   !	Reverted back to keeping X-Scanned-By headers as a pure trace
+	header with no result added. The old behaviour is a compile
+	time option. Derek Balling suggested this for the following
+	reasons:
+
+   	    a)	other milters authors will be tempted to remove the X-
+		Scanned-By headers if they include results that might
+		confuse users.
+
+   	    b)	a separate header like X-Spam-Flag should be added or
+		modified by the last hop to reflect final delivery
+		policy.
+
+   	    c)	a separate header like X-Spam-Flag can be more easily
+		tested by simple mail client rules that don't support
+		regular expressions.
+
+   !	mitler-spamc.sh.in: Moved "reset" mutex clean up code into start().
+   	Clearly a separate command for this was a mistake and not intuitive.
+
+   +	Added contrib/milter-lives.sh cron script check that my milters remain
+   	running.
+
+   +	configure.in: add --enable-startup-dir and better handling of defaults
+   	for different platforms.
+
+   !	configure.in: changed handling of --localstatedir defaults for different
+   	platforms.
+
+   *	As someone pointed out to me, my milters could be simply specified
+   	within your sendmail.mc file with:
+
+		include(`milter-sender.mc')dnl
+		include(`milter-date.mc')dnl
+		include(`milter-7bit.mc')dnl
+		include(`milter-spamc.mc')dnl
+
+	Assumes that *.mc are found in /etc/mail along side the sendmail.mc
+	script. If you use milter-sender, then you don't need milter-ahead,
+	otherwise, milter-ahead comes before milter-date.
+
+	The milters are ordered in this way because:
+
+		milter-sender and milter-ahead work on everything BEFORE
+		the DATA (message content) command.
+
+		milter-date, milter-7bit, milter-spamc work with the message
+		content AFTER the DATA command '.'
+
+		milter-date looks only at message headers.
+
+		milter-7bit looks at message headers and MIME parts over the
+		entire message body.
+
+		milter-spamc looks at message headers and only the first 64K
+		of the message body. Scanning for spam is considered to be
+		an intensive task that I think it should come last. Like wise
+		for anti-virus filters.
+
+
+--0.15--
+
+   +	Check for Precedence header and if -r (reject) is given change
+   	for -d (discard) on list, bulk, or junk instead. Suggested by
+   	Andrey Chernov.
+
+   +	Add named socket unlink code to atExitCleanup() to work around the
+   	fact the libmilter doesn't do it itself properly.
+
+   !!	Fixed bug in filterRcpt() with incorrect number of required dots passed
+   	to parsePath().
+
+
+--0.14--
+
+   +	Requires LibSnert 1.31 for smdbReopen() fix for Berkeley DB 4.2.52;
+   	posix semaphore fix.
+
+   !	configure.in: on Solaris fix search for library containing inet_ntop.
+   	If not found, there is a limited replacement that does IPv4 in LibSnert.
+
+   !	configure.in: fix inclusion of -lpthread for Solaris machines. Appears
+   	that there is a stub in the standard library that confuses the configure
+   	script into thinking it has the correct library already in its list.
+
+   !	configure.in: changed some of the --with options to be --enable options
+   	in line with their intended documented use in autoconf.
+
+   !	install.sh is now generated by ./configure from install.sh.in, since
+   	there are just too many parameters to pass to it.
+
+
+
+--0.13--
+
+   +	Requires LibSnert 1.30 for MailSpanLocalPart() fix and TimeStampAdd().
+
+   !	main(): fix gethostbyname() error handling to refer to h_errno.
+
+   !	Removed some unused variables for the old time stamp generation.
+
+   +	Added -l option to limit number of "untrusted" RCPTs. This is
+   	different from sendmail's:
+
+   		define(`confMAX_RCPTS_PER_MESSAGE', 50)dnl
+
+	which affects all users, authenticated, white-listed, or otherwise.
+	Requested by Derek Balling.
+
+   -	addTimeStamp() renamed to TimeStampAdd() and moved to LibSnert.
+
+   -	Moved getIp4Octets(), ip4ToString(), and inet_top() cover function to
+   	Socket.c in LibSnert.
+
+   -	Move smdb.c to LibSnert.
+
+   !	When compiling --without-db, smdbSetDebugMask() in main() was not
+   	wrapped by #ifdef HAVE_BERKELEY_DB. Reported by Lennard Kong. Also
+   	fixed ./configure script to define  MILTER_WITH_BERKELEY_DB to
+   	avoid name space collisions.
+
+   !	Modified the spam=... log line to provide more detail about the message
+   	just scanned, such as score, threshold, subject, sender, and list of
+   	recipients. Requested by Derek Balling. Can be used by custom mail
+   	log scanners for report generation without requiring any more detailed
+   	logging other than -v 1.
+
+   !	The following headers now replace previous occurrences:
+
+   		X-Spam-Flag
+   		X-Spam-Level
+   		X-Spam-Status
+   		X-Spam-Report
+
+   	After a request from Derek Balling and some discussion I've been
+	convinced that keeping X-Spam-* headers from other servers is
+	confusing to non-technical users, and the scores and rules from
+	other sites will be site specific.
+
+   +	Add signal handler for QUIT to perform an immediate exit() from the
+   	milter in order to avoid the problem of semaphore leakage.
+
+   !	milter-spamc.sh.in modified to use QUIT signal to terminate the milter
+   	instead of KILL.
+
+   !	Fixed bug in parsePath() when deleting recipients with mixed case
+   	email addresses. Reported by Brett Bajcsi.
+
+   !	Fixed bug with prepending the subject tag when the subject tag is
+   	set empty (-s ''). Reported by Alexander Zangerl.
+
+   !	Fixed configure.in detection of gethostbyname() and co. for Solaris.
+
+   !	nullWorkspaceError(): disabled the smfi_setreply() call, which wants
+	to allocated memory, but if we arrived at this point, then there is
+	probably a memory space issue and we can't rely on functions that
+	use malloc().
+
+   !	Modified install.sh to accept ${prefix} argument for BSD systems.
+
+   -	Removed GETHOSTBYNAME_MUTEX_WRAPPER from around SocketOpenTcpClientWait(),
+   	since it no longer calls gethostbyname().
+
+   !	Fix case where the original RCPT is the system spam box. milter-spamc
+   	would add the system spam box, which sendmail would ignore since it was
+   	already a recipient then milter-spamc would delete the original RCPT
+   	list, which happened to be the system spam box.  An empty RCPT list
+   	results in a discard of the message.
+
+   !	Changed "destroyed per-connection resources" to include the queue-
+	id. Useful for tracing messages on OS'es such as FreeBSD that don't
+	use process-ids to identify different threads, like Linux.
+
+   +	milter-spamc.sh.in: fixed getpid() to be more precise about which
+   	field the PPID is to be found for all platforms.
+
+   +	milter-spamc.sh.in: if the kill -QUIT fails, then fall back on -KILL
+   	and clean up the mutex.
+
+--0.12--
+
+   +	configure.in: Add check for Berkeley DB 4.2
+
+   !	smdb.c: Adjusted preprocessor version checks for Berkeley DB in
+   	preparation for 4.2.50.
+
+   !	Fixed redundant CRLF in X-Scanned-By header that caused sendmail to
+   	report "POSSIBLE ATTACK from..." log messages.
+
+   !	Added null pointer guard for {client_addr} and {client_name} when
+   	generating the simulated Received: header for spamd. There is an
+   	earlier null guard that would report a log message about this, but
+   	it only appears if the Berkeley DB support is added. This happens
+   	when the {client_*} macros fail to be added to the .mc and sendmail.cf
+   	recreated. See milter-spamc.mc
+
+   +	Add atExitCleanup() handler. It will be called when the milter is
+   	terminated normally (kill -9 is not normal).
+
+   +	Added comment about needing Connect:127.0.0.1 OK in the access
+   	database.
+
+   +	Added comment about file ownership and permissions used.
+
+
+--0.11--
+
+  **	A wopping BIG THANK YOU! to April Lorenzen who sent nine (9) DVDs
+   	from the Amazon wishlist. Somebody thinks my software is worth it!
+
+   +	Requires LibSnert 1.28 for Unix domain socket support and BufInsertBytes().
+
+   +	Added support for IPv6. Suggested patch by Alex Vasylenko.
+
+   +	With Unix domain socket support in LibSnert, its now possible
+   	to specify -H /var/lib/spamd/socket or similar. Thank you
+   	Alex Vasylenko.
+
+   +	Added support for Cyrus mailers to filterRcpt(). Suggested patch
+   	by Alex Vasylenko.
+
+   +	Added support for archaic syntax that is NOT conformant with RFC 2821,
+   	but apparently is still in use by some old servers:
+
+   		MAIL FROM:<john smith <jsmith@domain>>
+
+   +	Added -F option to provide a means to reformat the recipient list
+   	addresses to redirect spam to special user folders. Suggested by
+   	Michael Zakharoff.
+
+   !	Replaced hard coded $(statedir)/lib/milter-sender for
+   	$(statedir)/milter-sender.
+
+   +	Add -f option to support Sendmail's access database in order
+	to allow white listing by-pass of SpamAssassin. Commissioned by
+	Derek Balling. Requires {client_*} family of macros for the
+	connection phase.
+
+   +	Added missing define for the THE_MUTEX when GETHOSTBYNAME_MUTEX_WRAPPER
+   	was defined. Also missing #include <com/snert/lib/sys/Mutex.h> line.
+
+   +	Add simulated Received: header to the header block passed to spamd for
+   	the milter-spamc host. Sendmail does not add its Received header until
+   	after the mitlers are finished. Without this header some SpamAssassin
+   	tests related to the Received header chain are skewed. Reported by
+   	Derek Balling.
+
+   !	Replaced time stamp format code with addTimeStamp(), because some
+	implementations of strftime() do not support the GNU extension %z
+	for the numerical time zone. This function is similar to how
+	Sendmail formats the timestamp.
+
+--0.10--
+
+   !	configure.in: simplified and reduced library searches so as to
+   	only specify those libraries we really need.
+
+   !	configue.in: fixes libmilter search for Debian systems.
+
+   !	Fixed copy/paste error in milter-*sh.in scripts.
+
+--0.9--
+
+   !	configure.in: corrected configuration report to report LibSnert
+   	presence or not.
+
+   +	Add hostname, IP, and RFC 2822 timestamp to X-Scanned-By line.
+	Useful for seeing the order of insertions from multiple
+	scanners. It appears that Sendmail prepends headers before
+	similar headers in the same manner that Received headers are
+	handled.
+
+   +	Added documentation that milter-spamc support SpamAssassin 2.55
+   	or better. Appears that 2.50 and under don't support the REPORT
+   	command in SPAMC/1.2 protocol.
+
+   +	Added missing documentation about the -A option.
+
+   +	Added new option -C to CHECK for spam instead of REPORT for
+   	spam. This will completely disable X-Spam-Report headers.
+
+   +	Added new option -S that append the score/threshold to the
+   	spam subject tag. Suggested by Ben M. VanWagner.
+
+   +	Added compile-time option to change the X-Spam-Level character.
+   	See configure --with-level-char. This is NOT a command-line
+   	option to milter-spamc, because I think its a BAD idea to use
+   	punctuation characters that are used in regular expressions,
+   	glob file matching, and other scripting languages. So I
+   	discourage changing it, in favour of a neutral alpha character.
+
+   !	milter-spamc.sh.in: The startup script would fail for Linux
+	systems that have ps version 3, because it changed the default
+	output for some processes (stripped the command line arguments
+	and wrapped the command name in squre brackets), which is not
+	entirely clear or useful. However, I found that the BSD options
+	-acxj work equally well on Linux whether using ps version 2 or 3.
+
+--0.8--
+
+   +	After popular demand, replaced a compile time option
+	ADD_REPORT_ONLY_FOR_SPAM with the command line option -A.
+	Figured this is something people want to play with without
+	having to recompile code.
+
+   +	Created a Sendmail/8.12.10 patch that allows a milter to
+	return two new return codes during the xxfi_eom() hook:
+
+   		SMFIS_TEMPFAIL_AND_DELIVER
+   		SMFIS_REJECT_AND_DELIVER
+
+	These can be used to return a rejection response to the client
+	after the terminating dot for the message content AND continue
+	to deliver the message (since we've already received all the
+	content).
+
+	The idea here is to allow the option combination:
+
+		-r 0 -B spam@my.domain.tld
+
+	so that the a sender will be notified of the failure and that
+	a copy can be saved to retrain SpamAssassin in case of false
+	positives. Requested by Claudio Eichenberger.
+
+   !	Fix argument passed to vsnprintf() to be a va_list. It always
+	was, just that some compilers complian about going from
+	va_list to void * to va_list again.
+
+   !	Changed comment characters in milter-spamc.mc from # to m4's
+	dnl macro.
+
+   !	filterEndMessage(): Modified processing of spamd result
+	headers to be more liberal, allowing for the introduction of
+	new headers without breaking the milter. Reported by Dan
+	Mahoney.
+
+   !	configure.in: Added test for inet_aton() in libresolv for
+   	SunOS 5.8, required by libmilter and socket applications.
+
+--0.7--
+
+   +	Requires LibSnert 1.20 for modified SocketOpenTcpClientWait(),
+   	SocketReadLine(), SocketWaitForInput(), SocketWaitForOutput().
+
+   !	Change empty report line conversion in X-Spam-Report from "\t\n"
+	to "____\n", which is less confusing to people who view the
+	headers and think the blank lines are the same as empty lines
+	and wonder why the headers don't end there.
+
+   +	Add autoconf / configure script support.
+
+   !	resend.pl script now sets the LANG environment variable before
+   	invoking the date utility, so that month names are in english
+   	as used in RFC 2822.
+
+   +	Add -d and -r options to discard or reject spam messages that
+	exceed the spamd threshold "required_hits" by certain amounts,
+	instead of copying or redirecting the messages to a spam
+	collection box.
+
+   	So for example if the spamd required_hits is set to 7 and -r 5,
+	then messages with a score between 7 and less than 12 will be
+	tagged, while those in excess of 12 are rejected. Now if -r 0
+	were set, then any and all spam would be rejected. Similarly for
+	-d. Also both -d and -r may be used for example: required_hits
+	7  -r 5 -d 10, then scores between 7 and less than 12 are
+	tagged, 12 and less than 17 are rejected, and in excess of 17
+	are discarded.
+
+   	I choose to specify -r and -d relative to the "required_hits"
+	variable specified in the SpamAssassin configuration, instead of
+	absolute scores so that changes in the base variable didn't
+	require changes to the parameters of the milter. This insures
+	that -r and -d are always equal or greater than required_hits.
+
+   +	Fixed how build numbers are applied and incorporated into the
+	source. Before the configure script would insert the build
+	number into milter-spamc.h, but that could not be updated
+	easily with each recompile. Now the build number is passed on
+	the command line to gcc from the makefile.
+
+   *	I've been asked this question a couple of times and thought I
+   	should share the response.
+
+	francesco defilippo wrote:
+
+	> hello,
+	>
+	> hello, why to add the report of spamassassin if the mail it is
+	> not Spam?
+
+	Because I find it useful to have when there are false-negatives,
+	spam that sneaks past SpamAssassin.  I can use it to modify
+	scores or add new rules.
+
+	Also when clients call the support line to complain sometimes
+	about spam, I can ask them to view the headers and tell me the
+	rules that were triggered.
+
+	Also in Mozilla, its possible to add extra headers to the
+	filters, like X-Spam-Report, that I can then use to do further
+	filtering of my Inbox mailbox.
+
+	Also some of our more knowledgeable customers, who know about our
+	spam filtering, look at their message headers specially to see
+	the scores.
+
+	Adding the report to the headers doesn't get in the way of
+	normal viewing and has its uses even when a message is not spam.
+	Its useful information and reassuring to see that the message
+	was processed and what rules were triggered.
+
+
+--0.6--
+
+   !	Slight change to LICENSE.TXT point 5, commercial use as an end-
+	user now allows for using modified source, such as site specific
+	bug fixes for example. Whats the point of having source code if
+	you can't fix and use it in a hurry. Recommended by Derek Balling.
+
+   +	Added debug message to log which spamd user profile is being used.
+
+   !	Replaced isError flag with byPass flag. The isError flag was
+	being incorrectly used throughout. The byPass flag is set true
+	if spamd processing is to be skipped (spamdPost < 0) or if the
+	sender authenticated themselves. The byPass flag still allows
+	-a processing. Reported by Richard Stevenson.
+
+   !	Fix handling of null workspace errors to respond with 421 and
+	return SMFIS_TEMPFAIL. Without the workspace, we cannot process
+	anything and we cannot call vSetReply(), which wants to refer to
+	workspace data.
+
+   !	In filterEndMessage() promoted some syslog() messages from LOG_DEBUG
+   	to LOG_ERR, since really should know about them if they occur.
+
+   !	Change the default socket I/O timeout from 0 (infinite) to 120
+   	seconds. Should be ample time to scan 64KB of data.
+
+   +	Added my resend.pl script for resending mail.
+
+--0.5--
+
+   +	Requires LibSnert 1.19 for SocketReadLine() fix.
+
+   +	Add check and by-pass of spam filtering if user authenticates
+   	themselves.
+
+   +	Fix handling of blank report lines from SpamAssassin. Reported
+   	by David Covey. SocketReadLine() didn't report the difference
+   	between an empty line and EOF.
+
+   +	Fixed the -t specified to be handled in seconds as documented
+	and not milliseconds. Reported by Benji Spencer.
+
+   +	Added some more documentation.
+
+
+--0.4--
+
+   +	Requires LibSnert 1.18 for SocketOpenTcpClientWait() fix.
+
+   -	Remove -m option.
+
+	The {msg_size} macro can be NULL and I test for that. It can
+	also be faked, like everything else SMTP.
+
+	milter-spamc doesn't really need the message size any ways; it
+	was an idea taken from Peter Runestig's SA milter that I thought
+	might be useful. Milter-spamc only passes spamd the headers and
+	the first body chunk (<= 64KB) given to it by Sendmail. This is
+	similar to Peter Runestig's SA milter technique.
+
+	Doing it this way is more efficient for high volume servers: it
+	eliminates the need to store the content in a temporary file and
+	allows the milter to release the socket to spamd that much
+	sooner thus reducing load. Also SA appears to identify spam
+	equally well with just the first 64KB vs. the whole message.
+
+	In the past I've resent a batch of false-positives to sa-learn
+	that contain large file attachments (2 - 4 MB) in order to
+	retrain and sa-learn can really spike the server load on these
+	sorts of messages. I would have preferred to just reprocess the
+	headers and first 64K. Given the observed behaviour of sa-learn,
+	passing large whole messages to SA during the SMTP connection
+	could bring a machine to its knees.
+
+--0.3--
+
+   +	filterBody(): fixed so as NOT to tack a null byte at the end of
+	the first chunk thus inadvertently changing its content. Added
+	writechunk()/writebuffer().
+
+   !	Replaced printline() with writeline()/writebuffer(). writebuffer()
+   	is the common non-blocking output function. The frontend handles
+   	debug logging of the C string.
+
+   !	In writebuffer(), writing to a non-blocking socket might mean
+   	that the buffer is not written all at once, so we have to keep
+   	writing until the whole buffer is sent. Could have used blocking
+   	socket I/O, which handles this, but then you can't handle timeout
+   	conditions.
+
+--0.2--
+
+   +	First unannounced public release (alpha).
+
+   +	Added -U option to force the use of a specific user account all
+   	the time, instead of just using a default (-u) when no local
+   	account is specified. Useful for system wide filtering without
+   	user configuration.
+
+
+--0.1--
+
+   +	Requires LibSnert 1.17.
+
+
+
