@@ -87,6 +87,7 @@
 #include <com/snert/lib/version.h>
 #include <com/snert/lib/io/socket2.h>
 #include <com/snert/lib/sys/Time.h>
+#include <com/snert/lib/sys/sysexits.h>
 #include <com/snert/lib/net/network.h>
 #include <com/snert/lib/mail/limits.h>
 #include <com/snert/lib/mail/smf.h>
@@ -235,6 +236,15 @@ static Option optSpamdUser		= { "spamd-user",		"",			"Default user account to pr
 static Option optSubjectTag		= { "subject-tag",		"[SPAM]",		"Subject tag for messages identified as spam." };
 static Option optSubjectTagScore	= { "subject-tag-score", 	"-",			"Append the score to the subject tag." };
 static Option optSmtpDetailedReply	= { "smtp-detailed-reply", 	"+",			"Provide informative SMTP rejection messages with SpamAssassin score and/or rules." };
+static Option opt_version	= { "version",		NULL,		"Show version and copyright." };
+
+static const char usage_info[] =
+  "Write the configuration and compile time options to standard output\n"
+"# and exit.\n"
+"#"
+;
+Option opt_info			= { "info", 		NULL,		usage_info };
+
 
 static Option *optTable[] = {
 	&optIntro,
@@ -247,6 +257,7 @@ static Option *optTable[] = {
 	&optExtraDiscard,
 	&optExtraReject,
 	&optExtraLowSpam,
+	&opt_info,
 	&optIsGateway,
 	&optLevelCharacter,
 	&optMailArchive,
@@ -265,6 +276,7 @@ static Option *optTable[] = {
 	&optSpamdUser,
 	&optSubjectTag,
 	&optSubjectTagScore,
+	&opt_version,
 	NULL
 };
 
@@ -285,7 +297,7 @@ static void atExitCleanUp(void);
  * Write buffer, logging only errors.
  */
 int
-writebuffer(workspace data, char *buf, long size)
+writebuffer(workspace data, unsigned char *buf, long size)
 {
 	long nbytes;
 
@@ -305,14 +317,14 @@ writeline(workspace data, char *line, long size)
 {
 	smfLog(SMF_LOG_DIALOG, TAG_FORMAT "> %s", TAG_ARGS, line);
 
-	return writebuffer(data, line, size < 0 ? strlen(line) : size);
+	return writebuffer(data, (unsigned char *)line, size < 0 ? strlen(line) : size);
 }
 
 /*
  * Log amount of data sent then write data.
  */
 int
-writechunk(workspace data, char *chunk, long size)
+writechunk(workspace data, unsigned char *chunk, long size)
 {
 	smfLog(SMF_LOG_DIALOG, TAG_FORMAT "> [%ld bytes of data]", TAG_ARGS, size);
 
@@ -865,7 +877,7 @@ filterBody(SMFICTX *ctx, unsigned char *chunk, size_t size)
 		return smfNullWorkspaceError("filterBody");
 
 	if (size == 0)
-		chunk = "";
+		chunk = (unsigned char *)"";
 	else if (size < 20)
 		chunk[--size] = '\0';
 
@@ -1062,7 +1074,7 @@ filterEndMessage(SMFICTX *ctx)
 	if (0 < BufLength(data->long_string)) {
 		/* Remove our trailing whitespace "\r\n  ". */
 		BufSetLength(data->long_string, BufLength(data->long_string) - (sizeof (X_SPAM_REPORT_NL)-1));
-		(void) smfHeaderSet(ctx, X_SPAM_REPORT, BufBytes(data->long_string), 1, data->hasSpamReport);
+		(void) smfHeaderSet(ctx, X_SPAM_REPORT, (char *)BufBytes(data->long_string), 1, data->hasSpamReport);
 	}
 
 	if (is_spam == smfYes) {
@@ -1179,6 +1191,7 @@ error1:
 	/* Remove trailing ",<". */
 	BufSetLength(data->long_string, BufLength(data->long_string)-2);
 
+	(void) TextTransliterate(data->subject, "\r\n\t", " ");
 	syslog(
 		LOG_INFO, TAG_FORMAT "spam=%s score=%.2f required=%.2f client_addr=%s client_name=%s subject='%s' mail=<%s> rcpts=<%s",
 		TAG_ARGS, is_spam, score, threshold,
@@ -1294,6 +1307,57 @@ atExitCleanUp()
 	smfAtExitCleanUp();
 }
 
+void
+printVersion(void)
+{
+	printf(MILTER_NAME " " MILTER_VERSION " " MILTER_COPYRIGHT "\n");
+	snertPrintVersion();
+#ifdef _BUILT
+	printf("Built on " _BUILT "\n");
+#endif
+}
+
+void
+printInfo(void)
+{
+#ifdef MILTER_NAME
+	printVar(0, "MILTER_NAME", MILTER_NAME);
+#endif
+#ifdef MILTER_VERSION
+	printVar(0, "MILTER_VERSION", MILTER_VERSION);
+#endif
+#ifdef MILTER_COPYRIGHT
+	printVar(0, "MILTER_COPYRIGHT", MILTER_COPYRIGHT);
+#endif
+#ifdef MILTER_CONFIGURE
+	printVar(LINE_WRAP, "MILTER_CONFIGURE", MILTER_CONFIGURE);
+#endif
+#ifdef _BUILT
+	printVar(0, "MILTER_BUILT", _BUILT);
+#endif
+#ifdef LIBSNERT_VERSION
+	printVar(0, "LIBSNERT_VERSION", LIBSNERT_VERSION);
+#endif
+#ifdef LIBSNERT_BUILD_HOST
+	printVar(LINE_WRAP, "LIBSNERT_BUILD_HOST", LIBSNERT_BUILD_HOST);
+#endif
+#ifdef LIBSNERT_CONFIGURE
+	printVar(LINE_WRAP, "LIBSNERT_CONFIGURE", LIBSNERT_CONFIGURE);
+#endif
+#ifdef SQLITE_VERSION
+	printVar(0, "SQLITE3_VERSION", SQLITE_VERSION);
+#endif
+#ifdef MILTER_CFLAGS
+	printVar(LINE_WRAP, "CFLAGS", MILTER_CFLAGS);
+#endif
+#ifdef MILTER_LDFLAGS
+	printVar(LINE_WRAP, "LDFLAGS", MILTER_LDFLAGS);
+#endif
+#ifdef MILTER_LIBS
+	printVar(LINE_WRAP, "LIBS", MILTER_LIBS);
+#endif
+}
+
 int
 main(int argc, char **argv)
 {
@@ -1321,10 +1385,17 @@ main(int argc, char **argv)
 		(void) optionArrayL(argc, argv, optTable, smfOptTable, NULL);
 	}
 
-	/* Show them the funny farm. */
+	if (opt_version.string != NULL) {
+		printVersion();
+		exit(EX_USAGE);
+	}
+	if (opt_info.string != NULL) {
+		printInfo();
+		exit(EX_USAGE);
+	}
 	if (smfOptHelp.string != NULL) {
 		optionUsageL(optTable, smfOptTable, NULL);
-		exit(2);
+		exit(EX_USAGE);
 	}
 
 	if (smfOptQuit.string != NULL) {

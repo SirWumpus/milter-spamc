@@ -1,13 +1,18 @@
 /***********************************************************************
- *** 
+ ***
  ***********************************************************************/
 
 #undef MILTER_NAME
 #undef MILTER_MAJOR
 #undef MILTER_MINOR
-#undef MILTER_AUTHOR
 #undef MILTER_VERSION
+#undef MILTER_AUTHOR
 #undef MILTER_COPYRIGHT
+#undef MILTER_PLATFORM
+#undef MILTER_CONFIGURE
+#undef MILTER_CFLAGS
+#undef MILTER_LDFLAGS
+#undef MILTER_LIBS
 
 #undef NDEBUG
 #undef RUN_AS_USER

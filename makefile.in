@@ -10,8 +10,8 @@
 
 .POSIX :
 
-MILTER 		= @PACKAGE_TARNAME@
-VERSION		= @PACKAGE_VERSION@
+MILTER          = @PACKAGE_TARNAME@
+VERSION         = @PACKAGE_VERSION@.${MILTER_BUILD}
 
 ########################################################################
 ### Pick one that best suits your system.
@@ -33,39 +33,65 @@ A = .@LIBEXT@
 O = .@OBJEXT@
 E = @EXEEXT@
 
-#
-# Paths for supporting headers and libraries.
-#
-top_srcdir	= @top_srcdir@
-abs_top_srcdir 	= @top_srcdir@
-SNERT_TARDIR	= @rel_tardir@
-SNERT_INCDIR	= @rel_incdir@
-SNERT_LIBDIR	= @rel_libdir@
+VPATH           := @srcdir@
+srcdir          := @srcdir@
+top_srcdir      := @top_srcdir@
+abs_srcdir      := @abs_srcdir@
 
-TARFILE	= ${MILTER}-${VERSION}.tar.gz
+builddir        := @builddir@
+top_builddir    := @top_builddir@
+abs_builddir    := @abs_builddir@
 
-CC	= @CC@
-CC_E	= @CC_E@
-CC_O	= @CC_O@
-CFLAGS	= @CFLAGS@
-LDFLAGS	= @LDFLAGS@
-LIBS	= @LIBS@
-TAR_I	= @TAR_I@
+SNERT_TARDIR    := @rel_tardir@
+SNERT_INCDIR    := @rel_incdir@
+SNERT_LIBDIR    := @rel_libdir@
 
-ARCHIVE	= @ARCHIVE@
-COMPILE	= @COMPILE@
-RANLIB	= @RANLIB@
-MD5SUM	= @MD5SUM@
-AUTOCONF= @AUTOCONF@
+TARFILE          = ${MILTER}-${VERSION}.tar.gz
+TGZ             := ${SNERT_TARDIR}/${TARFILE}
 
-MILTER_BUILD=`cat BUILD_ID.TXT`
+CC              := @CC@
+CC_E            := @CC_E@
+CC_O            := @CC_O@
+TAR_I           := @TAR_I@
+
+ARCHIVE         := @ARCHIVE@
+COMPILE         := @COMPILE@
+RANLIB          := @RANLIB@
+MD5SUM          := @MD5SUM@
+AUTOCONF        := @AUTOCONF@
+
+MILTER_BUILD    := `cat ${abs_srcdir}/BUILD_ID.TXT`
+
+LIBSNERT 	:= @LIBSNERT@
+LIB_RT 		:= @HAVE_LIB_RT@
+LIB_SEM		:= @HAVE_LIB_SEM@
+
+LIB_DB		:= @HAVE_LIB_DB@
+CFLAGS_DB	:= @CFLAGS_DB@
+LDFLAGS_DB	:= @LDFLAGS_DB@
+
+LIB_MILTER	:= @HAVE_LIB_MILTER@
+CFLAGS_MILTER	:= @CFLAGS_MILTER@
+LDFLAGS_MILTER	:= @LDFLAGS_MILTER@
+
+LIB_PTHREAD	:= @HAVE_LIB_PTHREAD@
+CFLAGS_PTHREAD	:= @CFLAGS_PTHREAD@
+LDFLAGS_PTHREAD	:= @LDFLAGS_PTHREAD@
+
+LIB_SQLITE3	:= @HAVE_LIB_SQLITE3@
+CFLAGS_SQLITE3	:= @CFLAGS_SQLITE3@
+LDFLAGS_SQLITE3	:= @LDFLAGS_SQLITE3@
+
+CFLAGS	:= ${CFLAGS_MILTER} ${CFLAGS_SQLITE3} ${CFLAGS_DB} ${CFLAGS_PTHREAD} @CFLAGS@
+LDFLAGS	:= ${LDFLAGS_MILTER} ${LDFLAGS_SQLITE3} ${LDFLAGS_DB} ${LDFLAGS_PTHREAD} @LDFLAGS@
+LIBS	:= @LIBS@ ${LIB_MILTER} ${LIB_SQLITE3} ${LIB_DB} ${LIB_SEM} ${LIB_PTHREAD}
 
 #######################################################################
 
 build : ${MILTER}
 	@echo
 	@echo '***************************************************************'
-	@echo Build `cat BUILD_ID.TXT` DONE
+	@echo Build ${VERSION} DONE
 	@echo '***************************************************************'
 	@echo
 
@@ -77,7 +103,7 @@ clean:
 	@echo '***************************************************************'
 	@echo
 
-distclean: 
+distclean:
 	@echo '---------------------------------------------------------------'
 	-rm -f ${MILTER}.md5 *.o *.obj *.tds *.log *.exe *.core
 	-rm -f sample.mc startup.sh install.sh config.h makefile
@@ -96,7 +122,7 @@ next-id:
 
 ${MILTER}: BUILD_ID.TXT $(SNERT) ${MILTER}.c
 	$(CC) -DMILTER_BUILD=$(MILTER_BUILD) -DMILTER_BUILD_STRING='"'$(MILTER_BUILD)'"' \
-	$(CFLAGS) $(LDFLAGS) -o ${MILTER} ${MILTER}.c $(LIBS)
+	$(CFLAGS) $(LDFLAGS) -D_BUILT="\"`date +'%a, %d %b %Y %H:%M:%S %z'`\"" -o ${MILTER} ${MILTER}.c $(LIBS)
 
 start:
 	./${MILTER}
@@ -105,15 +131,15 @@ stop:
 	-./${MILTER} -quit
 
 restart:
-	-./${MILTER} -restart	
-	
+	-./${MILTER} -restart
+
 install: ${MILTER} install.sh
 	sh install.sh
 
 install.sh: install.sh.in config.status
 
 config.status: configure
-	./configure	
+	./configure
 
 configure: aclocal.m4 configure.in
 	${AUTOCONF} -f
@@ -128,9 +154,9 @@ pack: next-id tar
 
 tar: MANIFEST.TXT configure manual.shtml
 	-rm -rf $(SNERT_TARDIR)/$(TARFILE) ${MILTER}.md5 autom4te.cache configure.lineno
-	echo '${VERSION}.'`cat BUILD_ID.TXT` >VERSION.TXT
-	echo '${MILTER}-${VERSION}.tar.gz' >FILE.TXT
-	tar -C ${SNERT_TARDIR} ${TAR_I} MANIFEST.TXT -zcf ${SNERT_TARDIR}/${TARFILE}
+	echo '${VERSION}' >VERSION.TXT
+	echo '${TARFILE}' >FILE.TXT
+	tar -C ${SNERT_TARDIR} ${TAR_I} MANIFEST.TXT -zcf ${TGZ}
 	@echo
 	@echo '***************************************************************'
 	@cd ${SNERT_TARDIR}; ${MD5SUM} ${TARFILE} | tee com/snert/src/${MILTER}/${MILTER}.md5

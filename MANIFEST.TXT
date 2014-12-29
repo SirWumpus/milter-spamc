@@ -24,9 +24,6 @@ com/snert/src/milter-spamc/manual.shtml.in
 com/snert/src/milter-spamc/MANIFEST.TXT
 com/snert/src/milter-spamc/milter-spamc.c
 com/snert/src/milter-spamc/sample.mc.in
-com/snert/src/milter-spamc/SpamAssassin/sa-mime-part.patch
-com/snert/src/milter-spamc/SpamAssassin/sa255-win-exe.patch
-com/snert/src/milter-spamc/SpamAssassin/sa263-win-exe.patch
 com/snert/src/milter-spamc/SpamAssassin/spamd-protocol-2.5.txt
 com/snert/src/milter-spamc/SpamAssassin/spamd-PROTOCOL-3.0.4.txt
 com/snert/src/milter-spamc/SpamAssassin/spamd-PROTOCOL-3.1.x.txt

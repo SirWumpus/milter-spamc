@@ -2,13 +2,13 @@
 #	Thus it begins...
 #######################################################################
 
-AC_INIT(milter-spamc, 1.15, [Anthony Howe <achowe@snert.com>])
+AC_INIT(milter-spamc, 1.16, [Anthony Howe <achowe@snert.com>])
 
 dnl The autoconf version I learned to deal with.
 AC_PREREQ(2.59)
 
 dnl Yes I wrote this mess.
-SNERT_INIT(MILTER, [Copyright 2003, 2009 by Anthony Howe. All rights reserved.])
+SNERT_INIT(MILTER, [Copyright 2003, 2014 by Anthony Howe. All rights reserved.])
 
 AC_SUBST(snert_milter_t_equate, 'C:1m;S:1m;R:2m;E:4m')
 
@@ -93,9 +93,23 @@ if test -f '../lib/version.sh' ; then
 	AC_SUBST(MD5SUM)
 	AC_SUBST(TAR_I)
 
-	AC_SUBST(HAVE_LIB_DB)
 	AC_SUBST(HAVE_LIB_RT)
+	AC_SUBST(HAVE_LIB_SEM)
+
+	AC_SUBST(CFLAGS_DB)
+	AC_SUBST(LDFLAGS_DB)
+	AC_SUBST(HAVE_LIB_DB)
+
+	AC_SUBST(CFLAGS_MILTER)
+	AC_SUBST(LDFLAGS_MILTER)
 	AC_SUBST(HAVE_LIB_MILTER)
+
+	AC_SUBST(CFLAGS_SQLITE3)
+	AC_SUBST(LDFLAGS_SQLITE3)
+	AC_SUBST(HAVE_LIB_SQLITE3)
+
+	AC_SUBST(CFLAGS_PTHREAD)
+	AC_SUBST(LDFLAGS_PTHREAD)
 	AC_SUBST(HAVE_LIB_PTHREAD)
 
 	if test "X${HAVE_LIB_MILTER}" = 'X' ; then
@@ -108,7 +122,7 @@ if test -f '../lib/version.sh' ; then
 		echo
 		exit 1
 	fi
-	if test "X${HAVE_LIB_PTHREAD}" = 'X' ; then
+	if test "${HAVE_LIB_PTHREAD:-no}" = 'no' -a "${CFLAGS_PTHREAD:-no}" = 'no' ; then
 		echo
 		echo '***************************************************************'
 		echo "       Sendmail milters require POSIX thread support."
@@ -130,6 +144,8 @@ fi
 #######################################################################
 #	Generate output.
 #######################################################################
+
+SNERT_FINI
 
 echo
 echo "Generating files..."
