@@ -852,7 +852,7 @@ spamdConnect(workspace data)
 		if ((hdr = VectorGet(data->headers, i)) == NULL)
 			continue;
 
-		if (!writeline(data, hdr->header, hdr->length))
+		if (0 < hdr->length && !writeline(data, hdr->header, hdr->length))
 			goto error1;
 
 		/* Assert RFC 2822 canonical newlines. */

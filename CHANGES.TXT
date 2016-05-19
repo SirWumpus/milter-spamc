@@ -33,6 +33,17 @@ is no set schedule for releases.
    +	Add milter/spamd SSL support. Requested by Dan Mahoney.
 
 
+--1.17--
+
+  !!	Fix bug in spamd communications that terminated the socket
+  	prematurally.  Reported by Athanasios Douitsis.
+
+--1.16--
+
+   !	Updated aclocal.m4.
+
+   +	Added -version and -info options.
+
 --1.15--
 
    +	Added smtp-detailed-reply to change whether SMTP replies should
