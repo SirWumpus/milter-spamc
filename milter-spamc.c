@@ -840,12 +840,12 @@ spamdConnect(workspace data)
 
 	if (data->localRcpt != NULL) {
 		smfLog(SMF_LOG_DIALOG, TAG_FORMAT "SPAMD User=%s", TAG_ARGS, data->localRcpt);
-		length = snprintf(data->line, SMTP_TEXT_LINE_LENGTH, "User: %s\r\n", data->localRcpt);
+		length = snprintf(data->line, SMTP_TEXT_LINE_LENGTH, "User: %s" NEWLINE_IS_CRLF, data->localRcpt);
 		if (!writeline(data, data->line, length))
 			goto error1;
 	}
 
-	if (!writeline(data, "\r\n", 2))
+	if (!writeline(data, NEWLINE_IS_CRLF, sizeof (NEWLINE_IS_CRLF)-1))
 		goto error1;
 
 	for (i = 0; i < VectorLength(data->headers); i++) {
