@@ -45,14 +45,14 @@ SNERT_OPTION_ENABLE_PID('${localstatedir}/run/milter/${PACKAGE_NAME}.pid')
 SNERT_OPTION_ENABLE_SOCKET('${localstatedir}/run/milter/${PACKAGE_NAME}.socket')
 
 AC_ARG_ENABLE(enable-header-buffer-size,
-	[AC_HELP_STRING([--enable-header-buffer-size=bytes],[specifiy the default header buffer size in bytes, default is 8192 bytes])],
+	[AS_HELP_STRING([--enable-header-buffer-size=bytes],[specifiy the default header buffer size in bytes, default is 8192 bytes])],
 	[
 		AC_DEFINE_UNQUOTED(DEFAULT_HEADER_BUFFER_SIZE, [$enableval])
 	]
 )
 
 AC_ARG_ENABLE(level-char,
-	[AC_HELP_STRING([--enable-level-char=character],[specifiy the X-Spam-Level header character without quotes, default is 'x'])],
+	[AS_HELP_STRING([--enable-level-char=character],[specifiy the X-Spam-Level header character without quotes, default is 'x'])],
 	[
 		AC_DEFINE_UNQUOTED(DEFAULT_SPAM_LEVEL_CHARACTER, ['$enableval'])
 	]
@@ -90,17 +90,22 @@ if test -f '../lib/version.sh' ; then
 	AC_SUBST(LIBS_RT)
 	AC_SUBST(HAVE_LIB_SEM)
 
+	AC_SUBST(CFLAGS_SNERT)
+	AC_SUBST(CPPFLAGS_SNERT)
+	AC_SUBST(LDFLAGS_SNERT)
+	AC_SUBST(LIBS_SNERT)
+
 	AC_SUBST(CFLAGS_DB)
 	AC_SUBST(LDFLAGS_DB)
 	AC_SUBST(HAVE_LIB_DB)
 
 	AC_SUBST(CFLAGS_MILTER)
 	AC_SUBST(LDFLAGS_MILTER)
-	AC_SUBST(HAVE_LIB_MILTER)
+	AC_SUBST(LIBS_MILTER)
 
 	AC_SUBST(CFLAGS_SQLITE3)
 	AC_SUBST(LDFLAGS_SQLITE3)
-	AC_SUBST(HAVE_LIB_SQLITE3)
+	AC_SUBST(LIBS_SQLITE3)
 
 	AC_SUBST(CFLAGS_PTHREAD)
 	AC_SUBST(LDFLAGS_PTHREAD)
