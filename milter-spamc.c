@@ -149,7 +149,7 @@ typedef struct {
 	char *localRcpt;			/* per message */
 	char helo[SMTP_DOMAIN_LENGTH+1];	/* per connection */
 	char line[SMTP_TEXT_LINE_LENGTH+1];	/* general purpose */
-	char subject[SMTP_TEXT_LINE_LENGTH+1];	/* subject header */
+	char subject[SMTP_TEXT_LINE_LENGTH/2];	/* subject header */
 	char client_name[SMTP_DOMAIN_LENGTH+1];	/* per connection */
 	char client_addr[IPV6_TAG_LENGTH+IPV6_STRING_LENGTH];	/* per connection */
 } *workspace;
