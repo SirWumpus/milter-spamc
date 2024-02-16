@@ -8,7 +8,7 @@ dnl The autoconf version I learned to deal with.
 AC_PREREQ(2.59)
 
 dnl Yes I wrote this mess.
-SNERT_INIT(MILTER, [Copyright 2003, 2016 by Anthony Howe. All rights reserved.])
+SNERT_INIT(MILTER, [Copyright 2003, 2024 by Anthony Howe. All rights reserved.])
 
 AC_SUBST(snert_milter_t_equate, 'C:1m;S:1m;R:2m;E:4m')
 
