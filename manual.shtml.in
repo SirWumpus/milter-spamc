@@ -24,10 +24,6 @@ SnertSoft - @PACKAGE_NAME@/@PACKAGE_VERSION@ for Sendmail
 @PACKAGE_NAME@/@PACKAGE_VERSION@
 <br/><span class="large">&laquo;Yet Another Sendmail-SpamAssassin Interface Milter&raquo;</span>
 </h1>
-<br/>
-<a href="#">Description &amp; Usage</a> &deg;
-<a href="#Installation">Installation &amp; Notes</a> &deg;
-<a href="#License">License &amp; Support</a>
 </div>
 
 <a name="Warning"></a>
@@ -66,42 +62,42 @@ The headers inserted by <code>@PACKAGE_NAME@</code> are:
 <div style="margin: 0 20 0 15;">
 <table cellpadding="2" cellspacing="0" border="0">
 <tr valign="top">
-	<td><nobr>X-Spam-Flag</nobr></td>
-	<td rowspan="6">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-	<td>Boolean "YES" or "NO" as to whether the message is spam.</td>
+    <td><nobr>X-Spam-Flag</nobr></td>
+    <td rowspan="6">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+    <td>Boolean "YES" or "NO" as to whether the message is spam.</td>
 </tr>
 <tr valign="top">
-	<td><nobr>X-Spam-Level</nobr></td>
-	<td>Zero or more 'x' characters representing the message score. Note that the choice of 'x'
-	is intentional, since its a neutral character. Asterisk, '*', and many other punctuation characters
-	have special mean in regular expressions and some other pattern matching languages, that they can be
-	error prone to scan for as literals.
-	</td>
+    <td><nobr>X-Spam-Level</nobr></td>
+    <td>Zero or more 'x' characters representing the message score. Note that the choice of 'x'
+    is intentional, since its a neutral character. Asterisk, '*', and many other punctuation characters
+    have special mean in regular expressions and some other pattern matching languages, that they can be
+    error prone to scan for as literals.
+    </td>
 </tr>
 <tr valign="top">
-	<td><nobr>X-Spam-Status</nobr></td>
-	<td>A summary line stating "YES" or "NO", the message score, and the SpamAssassin spam threshold.</td>
+    <td><nobr>X-Spam-Status</nobr></td>
+    <td>A summary line stating "YES" or "NO", the message score, and the SpamAssassin spam threshold.</td>
 </tr>
 <tr valign="top">
-	<td><nobr>X-Spam-Report</nobr></td>
-	<td>The report as returned by SpamAssassin. It normally provides a summary of the rules triggered, their scores, and brief description.
-	The report format can be customised through SpamAssassin's <code>/etc/mail/spamassassin/local.cf</code> file.
-	</td>
+    <td><nobr>X-Spam-Report</nobr></td>
+    <td>The report as returned by SpamAssassin. It normally provides a summary of the rules triggered, their scores, and brief description.
+    The report format can be customised through SpamAssassin's <code>/etc/mail/spamassassin/local.cf</code> file.
+    </td>
 </tr>
 <tr valign="top">
-	<td><nobr>X-Original-Recipient</nobr></td>
-	<td>When a spam message is redirected to a collection address, one or more of these headers
-	are added for each RCPT address given to Sendmail. These headers can be used should there be
-	a need to resend a message to the original recipients.
-	</td>
+    <td><nobr>X-Original-Recipient</nobr></td>
+    <td>When a spam message is redirected to a collection address, one or more of these headers
+    are added for each RCPT address given to Sendmail. These headers can be used should there be
+    a need to resend a message to the original recipients.
+    </td>
 </tr>
 <tr valign="top">
-	<td><nobr>X-Scanned-By</nobr></td>
-	<td>The milter name, version number, host name, host IP, and timestamp.
-	Note there might be multiple instances of this header, one for each participating scan milter,
-	in which case they should represent the most recent to oldest, similar to Received: header
-	behaviour.	This ordering is handled by Sendmail and not configurable.
-	</td>
+    <td><nobr>X-Scanned-By</nobr></td>
+    <td>The milter name, version number, host name, host IP, and timestamp.
+    Note there might be multiple instances of this header, one for each participating scan milter,
+    in which case they should represent the most recent to oldest, similar to Received: header
+    behaviour.  This ordering is handled by Sendmail and not configurable.
+    </td>
 </tr>
 </table>
 </div>
@@ -316,14 +312,14 @@ Below is a list of supported tags. Other options may specify additional tags.
 <tr class="syntax"><td><i>client-domain</i> </td><td><i>value</i></td></tr>
 <tr><td colspan="2">&nbsp;</td></tr>
 <tr class="normal">
-	<td colspan="2">
+    <td colspan="2">
 All mail sent by a connecting <i>client-ip</i>, unresolved <i>client-ip</i> address or IP addresses that resolve to a
 <i>client-domain</i> are black or white-listed.
 
 These allows you to white-list your network for mail sent internally
 and off-site, or connections from outside networks.
 <span class="note">Note that Sendmail also has special semantics for Connect: and untagged forms.</span>
-	</td>
+    </td>
 </tr>
 
 <tr><td colspan="2" class="bline">&nbsp;</td></tr>
@@ -339,12 +335,12 @@ and off-site, or connections from outside networks.
 <tr class="syntax"><td><i>sender@</i> </td><td><i>value</i></td></tr>
 <tr><td colspan="2">&nbsp;</td></tr>
 <tr class="normal">
-	<td colspan="2">
+    <td colspan="2">
 All mail from the <i>sender-address</i>, <i>sender-domain</i>, or that begins with <i>sender</i>
 is black or white-listed.
 In the case of a +detailed email address, the left hand side of the +detail is used for the <i>sender@</i> lookup.
 <span class="note">Note that Sendmail also has special semantics for From: and untagged forms.</span>
-	</td>
+    </td>
 </tr>
 
 <tr><td colspan="2" class="bline">&nbsp;</td></tr>
@@ -352,14 +348,14 @@ In the case of a +detailed email address, the left hand side of the +detail is u
 <tr class="syntax"><td>@PACKAGE_NAME@-Auth:</td><td><i>value</i>&nbsp;&nbsp;&nbsp;&sect; Can be a pattern list.</td></tr>
 <tr><td colspan="2">&nbsp;</td></tr>
 <tr class="normal">
-	<td colspan="2">
+    <td colspan="2">
 All mail from the authenticated sender, as given by sendmail's {<i class="syntax">auth_authen</i>} macro,
 is black or white-listed.
 The string searched by the pattern list will be the <code><i class="syntax">sender-address</i></code>.
 The empty form of @PACKAGE_NAME@-Auth: allows for a milter specific default
 only when {<i class="syntax">auth_authen</i>} is defined.
 
-	</td>
+    </td>
 </tr>
 
 <tr><td colspan="2" class="bline">&nbsp;</td></tr>
@@ -378,13 +374,13 @@ only when {<i class="syntax">auth_authen</i>} is defined.
 <tr class="syntax"><td><i>recipient@</i> </td><td><i>value</i></td></tr>
 <tr><td colspan="2">&nbsp;</td></tr>
 <tr class="normal">
-	<td colspan="2">
+    <td colspan="2">
 All mail to the <i>recipient-address</i>, <i>recipient-domain</i>, or that begins with <i>recipient</i>
 is black or white-listed.
 In the case of a +detailed
 email address, the left hand side of the +detail is used for the <i>recipient@</i> lookup.
 <span class="note">Note that Sendmail also has special semantics for Spam:, To:, and untagged forms.</span>
-	</td>
+    </td>
 </tr>
 <tr><td colspan="2" class="bline">&nbsp;</td></tr>
 </table>
@@ -401,7 +397,7 @@ like:
 <blockquote>
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
 <tr class="syntax">
-	<td width="65%">To:mx.example.com</td><td width="35%">RELAY</td>
+    <td width="65%">To:mx.example.com</td><td width="35%">RELAY</td>
 </tr>
 </table>
 </blockquote>
@@ -414,10 +410,10 @@ mail still gets filtered:
 <blockquote>
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
 <tr class="syntax">
-	<td width="65%">To:mx.example.com</td><td width="35%">RELAY</td>
+    <td width="65%">To:mx.example.com</td><td width="35%">RELAY</td>
 </tr>
 <tr class="syntax">
-	<td>@PACKAGE_NAME@-To:mx.example.com</td><td>SKIP</td>
+    <td>@PACKAGE_NAME@-To:mx.example.com</td><td>SKIP</td>
 </tr>
 </table>
 </blockquote>
@@ -429,50 +425,50 @@ Some additional examples:
 <blockquote>
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
 <tr class="syntax" valign="top">
-	<td width="40%" class="tline">@PACKAGE_NAME@-Connect:80.94</td>
-	<td width="60%" class="tline" style="text-align: right;">[80.94.96.0/20]OK&nbsp;&nbsp;REJECT</td>
+    <td width="40%" class="tline">@PACKAGE_NAME@-Connect:80.94</td>
+    <td width="60%" class="tline" style="text-align: right;">[80.94.96.0/20]OK&nbsp;&nbsp;REJECT</td>
 </tr>
 <tr><td colspan="2">&nbsp;</td></tr>
 <tr class="normal">
-	<td colspan="2">
-		Accept connections from the netblock 80.94.96.0/20 (80.94.96.0 through to 80.94.111.255) and
-		rejecting anything else in 80.94.0.0/16.
-	</td>
+    <td colspan="2">
+        Accept connections from the netblock 80.94.96.0/20 (80.94.96.0 through to 80.94.111.255) and
+        rejecting anything else in 80.94.0.0/16.
+    </td>
 </tr>
 <tr><td colspan="2" class="bline">&nbsp;</td></tr>
 <tr class="syntax" valign="top">
-	<td width="40%">@PACKAGE_NAME@-Connect:192.0.2</td>
-	<td width="60%" style="text-align: right;">/^192\.0\.2\.8[0-9]/OK&nbsp;&nbsp;REJECT</td>
+    <td width="40%">@PACKAGE_NAME@-Connect:192.0.2</td>
+    <td width="60%" style="text-align: right;">/^192\.0\.2\.8[0-9]/OK&nbsp;&nbsp;REJECT</td>
 </tr>
 <tr><td colspan="2">&nbsp;</td></tr>
 <tr class="normal">
-	<td colspan="2">
-		Accept connections from 192.0.2.80 through to 192.0.2.89, reject everything else in 192.0.2.0/24.
-	</td>
+    <td colspan="2">
+        Accept connections from 192.0.2.80 through to 192.0.2.89, reject everything else in 192.0.2.0/24.
+    </td>
 </tr>
 <tr><td colspan="2" class="bline">&nbsp;</td></tr>
 <tr class="syntax" valign="top">
-	<td width="40%">@PACKAGE_NAME@-From:example.com</td>
-	<td width="60%" style="text-align: right;">/^john@.+/OK&nbsp;&nbsp;/^fred\+.*@.*/OK&nbsp;&nbsp;REJECT</td>
+    <td width="40%">@PACKAGE_NAME@-From:example.com</td>
+    <td width="60%" style="text-align: right;">/^john@.+/OK&nbsp;&nbsp;/^fred\+.*@.*/OK&nbsp;&nbsp;REJECT</td>
 </tr>
 <tr><td colspan="2">&nbsp;</td></tr>
 <tr class="normal">
-	<td colspan="2">
-		Accept mail from &lt;john@example.com&gt; and &lt;fred@example.com&gt; when fred's address
-		contains a plus-detail in the address. Reject everything else from example.com.
-	</td>
+    <td colspan="2">
+        Accept mail from &lt;john@example.com&gt; and &lt;fred@example.com&gt; when fred's address
+        contains a plus-detail in the address. Reject everything else from example.com.
+    </td>
 </tr>
 <tr><td colspan="2" class="bline">&nbsp;</td></tr>
 <tr class="syntax" valign="top">
-	<td width="40%">@PACKAGE_NAME@-To:example.net</td>
-	<td width="60%" style="text-align: right;">!*+*@*!REJECT&nbsp;&nbsp;!*.smith@*!REJECT&nbsp;&nbsp;/^[0-9].*/REJECT</td>
+    <td width="40%">@PACKAGE_NAME@-To:example.net</td>
+    <td width="60%" style="text-align: right;">!*+*@*!REJECT&nbsp;&nbsp;!*.smith@*!REJECT&nbsp;&nbsp;/^[0-9].*/REJECT</td>
 </tr>
 <tr><td colspan="2">&nbsp;</td></tr>
 <tr class="normal">
-	<td colspan="2">
-		Reject mail to example.net using a plus-detail address or to any user who's last name is "smith" or addresses
-		starting with a digit. No default given, so B/W processing would continue.
-	</td>
+    <td colspan="2">
+        Reject mail to example.net using a plus-detail address or to any user who's last name is "smith" or addresses
+        starting with a digit. No default given, so B/W processing would continue.
+    </td>
 </tr>
 <tr><td colspan="2" class="bline">&nbsp;</td></tr>
 </table>
@@ -491,29 +487,29 @@ Consider the following examples:
 <blockquote>
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
 <tr class="syntax" valign="top">
-	<td width="40%" class="tline">@PACKAGE_NAME@-From:com<br/>From:com</td>
-	<td width="60%" class="tline" style="text-align: right;">/@com/REJECT&nbsp;&nbsp;NEXT<br/>OK</td>
+    <td width="40%" class="tline">@PACKAGE_NAME@-From:com<br/>From:com</td>
+    <td width="60%" class="tline" style="text-align: right;">/@com/REJECT&nbsp;&nbsp;NEXT<br/>OK</td>
 </tr>
 <tr><td colspan="2">&nbsp;</td></tr>
 <tr class="normal">
-	<td colspan="2">
-		Reject mail from places like compaq.com or com.com if
-		the pattern matches, but resume the access.db lookups
-		otherwise.
-	</td>
+    <td colspan="2">
+        Reject mail from places like compaq.com or com.com if
+        the pattern matches, but resume the access.db lookups
+        otherwise.
+    </td>
 </tr>
 <tr><td colspan="2" class="bline">&nbsp;</td></tr>
 <tr class="syntax" valign="top">
-	<td width="40%">@PACKAGE_NAME@-From:aol.com&nbsp;&nbsp;<br/>From:fred@aol.com&nbsp;&nbsp;</td>
-	<td width="60%" style="text-align: right;">/^[a-zA-Z0-9!#$&amp;'*+=?^_`{|}~.-]{3,16}@aol.com$/NEXT&nbsp;&nbsp;REJECT<br/>OK</td>
+    <td width="40%">@PACKAGE_NAME@-From:aol.com&nbsp;&nbsp;<br/>From:fred@aol.com&nbsp;&nbsp;</td>
+    <td width="60%" style="text-align: right;">/^[a-zA-Z0-9!#$&amp;'*+=?^_`{|}~.-]{3,16}@aol.com$/NEXT&nbsp;&nbsp;REJECT<br/>OK</td>
 </tr>
 <tr><td colspan="2">&nbsp;</td></tr>
 <tr class="normal">
-	<td colspan="2">
-		AOL local parts are between 3 and 16 characters long and can contain dots and RFC 2822 atext characters except % and /.
-		The NEXT used above allows one simple regex to validate the format of the address
-		and proceed to lookup white listed and/or black listed addresses.
-	</td>
+    <td colspan="2">
+        AOL local parts are between 3 and 16 characters long and can contain dots and RFC 2822 atext characters except % and /.
+        The NEXT used above allows one simple regex to validate the format of the address
+        and proceed to lookup white listed and/or black listed addresses.
+    </td>
 </tr>
 <tr><td colspan="2" class="bline">&nbsp;</td></tr>
 </table>
@@ -771,74 +767,74 @@ Those mark with <span class="syntax">&sect;</span> have meaning for this milter.
 <blockquote>
 <table border="0" cellspacing="0" cellpadding="2" width="100%">
 <tr>
-	<td class="tline" width="4%"><span class="syntax">&sect;</span></td>
-	<td class="tline" width="21%">all</td>
-	<td class="tline" width="75%">All messages</td>
+    <td class="tline" width="4%"><span class="syntax">&sect;</span></td>
+    <td class="tline" width="21%">all</td>
+    <td class="tline" width="75%">All messages</td>
 </tr>
 <tr>
-	<td><span class="syntax">&sect;</span></td>
-	<td>0</td>
-	<td>Log nothing.</td>
+    <td><span class="syntax">&sect;</span></td>
+    <td>0</td>
+    <td>Log nothing.</td>
 </tr>
 <tr>
-	<td><span class="syntax">&sect;</span></td>
-	<td>info</td>
-	<td>General info messages. (default) </td>
+    <td><span class="syntax">&sect;</span></td>
+    <td>info</td>
+    <td>General info messages. (default) </td>
 </tr>
 <tr>
-	<td><span class="syntax">&sect;</span></td>
-	<td>trace</td>
-	<td>Trace progress through the milter.</td>
+    <td><span class="syntax">&sect;</span></td>
+    <td>trace</td>
+    <td>Trace progress through the milter.</td>
 </tr>
 <tr>
-	<td><span class="syntax">&sect;</span></td>
-	<td>parse</td>
-	<td>Details from parsing addresses or special strings.</td>
+    <td><span class="syntax">&sect;</span></td>
+    <td>parse</td>
+    <td>Details from parsing addresses or special strings.</td>
 </tr>
 <tr>
-	<td><span class="syntax">&sect;</span></td>
-	<td>debug</td>
-	<td>Lots of debug messages.</td>
+    <td><span class="syntax">&sect;</span></td>
+    <td>debug</td>
+    <td>Lots of debug messages.</td>
 </tr>
 <tr>
-	<td><span class="syntax">&sect;</span></td>
-	<td>dialog</td>
-	<td>I/O from Communications dialog</td>
+    <td><span class="syntax">&sect;</span></td>
+    <td>dialog</td>
+    <td>I/O from Communications dialog</td>
 </tr>
 <tr>
-	<td><span class="syntax">&nbsp;</span></td>
-	<td>state</td>
-	<td>State transitions of message body scanner.</td>
+    <td><span class="syntax">&nbsp;</span></td>
+    <td>state</td>
+    <td>State transitions of message body scanner.</td>
 </tr>
 <tr>
-	<td><span class="syntax">&nbsp;</span></td>
-	<td>dns</td>
-	<td>Trace &amp; debug of DNS operations</td>
+    <td><span class="syntax">&nbsp;</span></td>
+    <td>dns</td>
+    <td>Trace &amp; debug of DNS operations</td>
 </tr>
 <tr>
-	<td><span class="syntax">&nbsp;</span></td>
-	<td>cache</td>
-	<td>Cache get/put/gc operations.</td>
+    <td><span class="syntax">&nbsp;</span></td>
+    <td>cache</td>
+    <td>Cache get/put/gc operations.</td>
 </tr>
 <tr>
-	<td><span class="syntax">&sect;</span></td>
-	<td>database</td>
-	<td>Sendmail database lookups.</td>
+    <td><span class="syntax">&sect;</span></td>
+    <td>database</td>
+    <td>Sendmail database lookups.</td>
 </tr>
 <tr>
-	<td><span class="syntax">&sect;</span></td>
-	<td>socket-fd</td>
-	<td>Socket open &amp; close calls</td>
+    <td><span class="syntax">&sect;</span></td>
+    <td>socket-fd</td>
+    <td>Socket open &amp; close calls</td>
 </tr>
 <tr>
-	<td><span class="syntax">&sect;</span></td>
-	<td>socket-all</td>
-	<td>All socket operations &amp; I/O</td>
+    <td><span class="syntax">&sect;</span></td>
+    <td>socket-all</td>
+    <td>All socket operations &amp; I/O</td>
 </tr>
 <tr>
-	<td class="bline"><span class="syntax">&sect;</span></td>
-	<td class="bline">libmilter</td>
-	<td class="bline">libmilter engine diagnostics</td>
+    <td class="bline"><span class="syntax">&sect;</span></td>
+    <td class="bline">libmilter</td>
+    <td class="bline">libmilter engine diagnostics</td>
 </tr>
 </table>
 </blockquote>
@@ -861,45 +857,39 @@ This is the list of possible SMTP responses generated by <code>@PACKAGE_NAME@</c
 </p>
 
 <dl>
-<dt><tt>550 	5.7.1 	message was identified as junk mail</tt></dt>
+<dt><tt>550     5.7.1   message was identified as junk mail</tt></dt>
 <dd>
 When the <a href="#opt_extra_reject">extra-reject</a> is used, this response is returned as the final
 result after the message content, if the message is identified as spam.
 </dd>
 
-<dt><tt>553 	5.1.0 	imbalanced angle brackets in path</tt></dt>
+<dt><tt>553     5.1.0   imbalanced angle brackets in path</tt></dt>
 <dd>The path given for a MAIL or RCPT command is missing a closing angle bracket</dd>
 
-<dt><tt>553 	5.1.0	address does not conform to RFC 2821 syntax</tt></dt>
+<dt><tt>553     5.1.0   address does not conform to RFC 2821 syntax</tt></dt>
 <dd>The address is missing the angle brackets, &lt; and &gt;, as required by the RFC grammar.</dd>
 
-<dt><tt>553 	5.1.0	local-part too long</tt></dt>
+<dt><tt>553     5.1.0   local-part too long</tt></dt>
 <dd>The stuff before the @ is too long.</dd>
 
-<dt><tt>553 	5.1.[37]	invalid local part</tt></dt>
+<dt><tt>553     5.1.[37]    invalid local part</tt></dt>
 <dd>The stuff before the @ sign contains unacceptable characters.</dd>
 
-<dt><tt>553 	5.1.0	domain name too long</tt></dt>
+<dt><tt>553     5.1.0   domain name too long</tt></dt>
 <dd>The stuff after the @ is too long.</dd>
 
-<dt><tt>553 	5.1.7	address incomplete</tt></dt>
+<dt><tt>553     5.1.7   address incomplete</tt></dt>
 <dd>Expecting a domain.tld after the @ sign and found none.</dd>
 
-<dt><tt>553 	5.1.[37]	invalid domain name</tt></dt>
+<dt><tt>553     5.1.[37]    invalid domain name</tt></dt>
 <dd>The domain after the @ sign contains unacceptable characters.</dd>
 
-<dt><tt>452		4.5.3	too many untrusted recipients</tt></dt>
+<dt><tt>452     4.5.3   too many untrusted recipients</tt></dt>
 <dd>The number of untrusted recipients was reached. See <a href="#opt_max_untrusted">max-untrusted</a>.</dd>
 
 </dl>
 
 <a name="Installation"></a>
-<div align="center">
-<br/>
-<a href="#">Description &amp; Usage</a> &deg;
-<a href="#Installation">Installation &amp; Notes</a> &deg;
-<a href="#License">License &amp; Support</a>
-</div>
 
 <h3>Installation</h3>
 <ol>
@@ -910,24 +900,24 @@ Download:
 <blockquote>
 <table border="0" cellspacing="0" cellpadding="2" width="100%">
 <tr>
-	<td class="tline bline"><a href="http://www.snertsoft.com/download/@PACKAGE_NAME@-@PACKAGE_VERSION@.tar.gz">@PACKAGE_NAME@/@PACKAGE_VERSION@</a></td>
-	<td class="tline bline"><a href="@PACKAGE_NAME@.md5">md5sum</a></td>
-	<td class="tline bline"><a href="CHANGES.TXT">Change Log</a></td>
+    <td class="tline bline"><a href="http://www.snertsoft.com/download/@PACKAGE_NAME@-@PACKAGE_VERSION@.tar.gz">@PACKAGE_NAME@/@PACKAGE_VERSION@</a></td>
+    <td class="tline bline"><a href="@PACKAGE_NAME@.md5">md5sum</a></td>
+    <td class="tline bline"><a href="CHANGES.TXT">Change Log</a></td>
 </tr>
 <tr>
-	<td class="bline"><a href="http://www.snertsoft.com/download/libsnert-current.tar.gz">LibSnert</a></td>
-	<td class="bline"><a href="@PACKAGE_NAME@.md5">md5sum</a></td>
-	<td class="bline"><a href="CHANGES-LIBSNERT.TXT">Change Log</a></td>
+    <td class="bline"><a href="http://www.snertsoft.com/download/libsnert-current.tar.gz">LibSnert</a></td>
+    <td class="bline"><a href="@PACKAGE_NAME@.md5">md5sum</a></td>
+    <td class="bline"><a href="CHANGES-LIBSNERT.TXT">Change Log</a></td>
 </tr>
 <tr>
-	<td class="bline"><a href="http://www.sendmail.org/">Sendmail 8.14</a></td>
-	<td class="bline">&nbsp;</td>
-	<td class="bline"><a href="http://www.sendmail.org/">http://www.sendmail.org/</a></td>
+    <td class="bline"><a href="http://www.sendmail.org/">Sendmail 8.14</a></td>
+    <td class="bline">&nbsp;</td>
+    <td class="bline"><a href="http://www.sendmail.org/">http://www.sendmail.org/</a></td>
 </tr>
 <tr>
-	<td class="bline"><a href="http://www.sleepycat.com/">Berkeley DB</a></td>
-	<td class="bline">&nbsp;</td>
-	<td class="bline"><a href="http://www.sleepycat.com/">http://www.sleepycat.com/</a></td>
+    <td class="bline"><a href="http://www.sleepycat.com/">Berkeley DB</a></td>
+    <td class="bline">&nbsp;</td>
+    <td class="bline"><a href="http://www.sleepycat.com/">http://www.sleepycat.com/</a></td>
 
 </tr>
 </table>
@@ -1095,8 +1085,8 @@ When using <a href="#opt_mail_format">mail-format</a>, you should place the loca
 your local network in the access database. For example:
 </p>
 <blockquote><pre>
-Connect:127.0.0.1		OK
-Connect:192.168.1		OK
+Connect:127.0.0.1       OK
+Connect:192.168.1       OK
 </pre></blockquote>
 </li>
 
@@ -1119,18 +1109,18 @@ Tag the subject and send a copy to <span class="param">spambox@my.domain.example
 </dd>
 
 <dt><tt>required_hits + extra_reject &lt;= <i>score</i> &lt; required_hits + extra_discard</tt></dt>
-	<dd>Send rejection to client and retain nothing. This allows
-	a server to notify the sender immediately that there was a problem and avoid cluttering the
-	spambox for messages that are clearly way above required_hits.
-	</dd>
+    <dd>Send rejection to client and retain nothing. This allows
+    a server to notify the sender immediately that there was a problem and avoid cluttering the
+    spambox for messages that are clearly way above required_hits.
+    </dd>
 
 <dt><tt>required_hits + extra_discard &lt;= <i>score</i> &nbsp;</tt></dt>
-	<dd>Accept the message only to erase it after with no notice given to the sender.
-	When the score is that much higher, don't even bother rejecting, cause the
-	sender probably doesn't care. Just chuck it out. Using <a href="#opt_extra_reject">extra-reject</a>
-	is preferable, because there is some sort of trace and acknowledgement of the message.
-	Using <a href="#opt_extra_discard">extra-discard</a> only leaves a trace in the mail logs.
-	</dd>
+    <dd>Accept the message only to erase it after with no notice given to the sender.
+    When the score is that much higher, don't even bother rejecting, cause the
+    sender probably doesn't care. Just chuck it out. Using <a href="#opt_extra_reject">extra-reject</a>
+    is preferable, because there is some sort of trace and acknowledgement of the message.
+    Using <a href="#opt_extra_discard">extra-discard</a> only leaves a trace in the mail logs.
+    </dd>
 </dl>
 </li>
 
@@ -1188,41 +1178,36 @@ milter:milter before starting the accept socket thread.
 <blockquote>
 <table cellpadding="0" cellspacing="0" border="0" width="100%">
 <tr>
-	<td width="40%">/etc/mail/</td><td width="20%">root:smmsp</td><td width="40%"><tt>0750 drwxr-x---</tt></td>
+    <td width="40%">/etc/mail/</td><td width="20%">root:smmsp</td><td width="40%"><tt>0750 drwxr-x---</tt></td>
 </tr>
 <tr>
-	<td>/etc/mail/access.db</td><td>root:smmsp</td><td><tt>0640 -rw-r-----</tt></td>
+    <td>/etc/mail/access.db</td><td>root:smmsp</td><td><tt>0640 -rw-r-----</tt></td>
 </tr>
 <tr>
-	<td>/etc/mail/sendmail.cf</td><td>root:smmsp</td><td><tt>0640 -rw-r-----</tt></td>
+    <td>/etc/mail/sendmail.cf</td><td>root:smmsp</td><td><tt>0640 -rw-r-----</tt></td>
 </tr>
 <tr>
-	<td>/etc/mail/@PACKAGE_NAME@.cf</td><td>root:root</td><td><tt>0644 -rw-r--r--</tt></td>
+    <td>/etc/mail/@PACKAGE_NAME@.cf</td><td>root:root</td><td><tt>0644 -rw-r--r--</tt></td>
 </tr>
 <tr>
-	<td>/var/run/milter/@PACKAGE_NAME@.pid</td><td>milter:milter</td><td><tt>0644 -rw-r--r--</tt></td>
+    <td>/var/run/milter/@PACKAGE_NAME@.pid</td><td>milter:milter</td><td><tt>0644 -rw-r--r--</tt></td>
 </tr>
 <tr>
-	<td>/var/run/milter/@PACKAGE_NAME@.socket</td><td>milter:milter</td><td><tt>0644 srw-r--r--</tt></td>
+    <td>/var/run/milter/@PACKAGE_NAME@.socket</td><td>milter:milter</td><td><tt>0644 srw-r--r--</tt></td>
 </tr>
 <tr>
-	<td>/var/db/@PACKAGE_NAME@</td><td>milter:milter</td><td><tt>0644 -rw-r--r--</tt> (*BSD)</td>
+    <td>/var/db/@PACKAGE_NAME@</td><td>milter:milter</td><td><tt>0644 -rw-r--r--</tt> (*BSD)</td>
 </tr>
 <tr>
-	<td>/var/cache/@PACKAGE_NAME@</td><td>milter:milter</td><td><tt>0644 -rw-r--r--</tt> (linux)</td>
+    <td>/var/cache/@PACKAGE_NAME@</td><td>milter:milter</td><td><tt>0644 -rw-r--r--</tt> (linux)</td>
 </tr>
 <tr>
-	<td>/usr/local/libexec/@PACKAGE_NAME@</td><td>root:milter</td><td><tt>0550 -r-xr-x---</tt></td>
+    <td>/usr/local/libexec/@PACKAGE_NAME@</td><td>root:milter</td><td><tt>0550 -r-xr-x---</tt></td>
 </tr>
 </table>
 </blockquote>
 
 </li>
-
-<li><p>
-I would like to express my thanks to Derek Balling for his support at
-<a href="http://www.milter.org/">http://www.milter.org/</a>.
-</p></li>
 
 </ul>
 
@@ -1271,238 +1256,6 @@ Sendmail/SpamAssassin milter.  It seriously kicks ass!
 </dd>
 
 </dl>
-
-<a name="License"></a>
-<div align="center">
-<br/>
-<a href="#">Description &amp; Usage</a> &deg;
-<a href="#Installation">Installation &amp; Notes</a> &deg;
-<a href="#License">License &amp; Support</a>
-</div>
-
-<!-- License Agreement -->
-
-<h3>License Agreement 1.4</h3>
-<p>
-SNERTSOFT IS WILLING TO LICENSE THE SOFTWARE IDENTIFIED ABOVE TO YOU
-ONLY UPON THE CONDITION THAT YOU ACCEPT ALL OF THE TERMS CONTAINED
-IN THIS LICENSE AGREEMENT. PLEASE READ THE AGREEMENT CAREFULLY. BY
-DOWNLOADING OR INSTALLING THIS SOFTWARE, YOU ACCEPT THE TERMS OF THE
-AGREEMENT.
-</p>
-<ol>
-<li><h4>Definitions</h4>
-	<ol>
-	<li><p>
-	``Package'' means the identified above in source and/or binary
-	form, any other machine readable materials provided (including,
-	but not limited to documentation, sample files, data files),
-	any updates or error corrections, and its derivative works.
-	</p></li>
-	<li><p>
-    ``Private Individual'' means an individual using the Package for
-     personal, private, and non-commercial use only.
-	</p></li>
-	<li><p>
-    ``Organisation'' means a legal entity or an individual that does
-     not qualify as a Private Individual defined above.
-	</p></li>
-	<li><p>
-    ``You'' (or ``Your'') means a Private Individual or Organisation
-     exercising rights under, and complying with all of the terms of,
-     this License or a future version of this License issued under
-     Section 5.1.  For legal entities, ``You'' includes any entity
-     which controls, is controlled by, or is under common control with
-     You.  For purposes of this definition,``control'' means (a) the
-     power, direct or indirect, to cause the direction or management
-     of such entity, whether by contract or otherwise, or (b)
-     ownership of more than fifty percent (50%) of the outstanding
-     shares or beneficial ownership of such entity.
-	</p></li>
-	<li><p>
-	The Package is an original work written by Anthony C. Howe,
-	hereto referred to as the ``Author''.
-	</p></li>
-	</ol>
-</li>
-
-<li><h4>License To Use</h4>
-	<ol>
-	<li><p>
-	If You are a Private Individual and so
-     benefited from a reduced purchase price, then You may only
-     compile, install, and use this Package, with or without private
-     modifications, exclusively on a single machine You legally own or
-     rent from a third party, provided You retain this notice, the Author's copyright
-     notice, any and all license control methods (<a href="#License_Control">see below</a>), and any
-     links within the Package back to the most current online versions
-     of this License and Disclaimer.
-	</p></li>
-	<li><p>
-    Otherwise if You have paid the full purchase price, then You may
-     compile, install, and use this Package, with or without private
-     modifications, exclusively on machines You legally own or rent from a third party,
-     provided You retain this notice, the Author's copyright notice,
-     any and all license control methods (<a href="#License_Control">see below</a>), and any links
-     within the Package back to the most current online versions of
-     this License and Disclaimer.
-	</p></li>
-	<li><p>
-You may copy, share, distribute, modify, and create derivative
-works from the user manuals and any related documentation
-solely for Your internal business purposes, such as in-house
-documentation, training manuals, or reference material.
-	</p></li>
-	</ol>
-</li>
-
-
-<li><h4>Restrictions</h4>
-	<ol>
-	<li><p>
-Redistribution, including but not limited to books, CDROMS,
-download mirrors, floppy diskettes, hard disks, hardcopy print
-outs, online archives, solid state disks, streaming tapes, or
-other current or future forms of storage or communication media
-of the Package, with or without modifications, including any
-and all derivative works such as source patches, binaries,
-binary patches, or similar is expressly forbidden without prior
-written permission in hardcopy (letter or fax) signed and dated
-by the Author.
-	</p></li>
-	<li><p>
-
-It is expressly forbidden for You to use the Package, in whole
-or in part, in any other software, except those designated by
-the Author.
-	</p></li>
-	<li><p>
-
-It is expressly forbidden for You to use the Package to develop
-any software or other technology having the same primary
-function as the Package, including but not limited to using the
-Package in any development or test procedure that seeks to
-develop like software or other technology, or determine if such
-software or other technology performs in a similar manner as
-the Package.
-	</p></li>
-	<li><p>
-
-You may not sell, rent, lease, or transfer the Package to third
-parties without prior written permission in hardcopy (letter or fax)
-signed and dated by the Author.
-	</p></li>
-	</ol>
-</li>
-
-
-<li><h4>Termination</h4>
-	<ol>
-	<li><p>
-This Agreement is effective until terminated. You may
-terminate this Agreement at any time by destroying all copies
-of the Package. This Agreement will terminate immediately without
-notice from the Author if You fail to comply with any provision
-of this Agreement. Either party may terminate this Agreement
-immediately should any portion of the Package become, or in
-either party's opinion be likely to become, the subject of a
-claim of infringement of any intellectual property right. Upon
-Termination, You must destroy all copies of the Package.
-	</p></li>
-	</ol>
-</li>
-
-
-<li><h4>Versions Of The License</h4>
-	<ol>
-	<li><p>
-New Versions. The Author may publish revised and/or new
-versions of the License from time to time. Each version will
-be given a distinguishing version number.
-	</p></li>
-	<li><p>
-
-Effect of New Versions. Once a version of the Package has been
-published under a particular version of the License, You may
-always continue to use it under the terms of that License
-version. You may also choose to use such Package under the
-terms of any subsequent version of the License published by the
-Author. No one other than the Author has the right to modify
-the terms applicable to the Package created under this License.
-	</p></li>
-	</ol>
-</li>
-</ol>
-
-
-<h3>Disclaimer</h3>
-
-<p>
-THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED
-WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-IN NO WAY SHALL THE AUTHOR OR LICENSEE BE LIABLE FOR ANY DIRECT, INDIRECT,
-INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
-BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
-ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-POSSIBILITY OF SUCH DAMAGE.
-</p>
-
-<a name="License_Control"></a>
-<h3>License Control</h3>
-<p>
-The Package may use one or more license control methods including, but
-not limited to, license key activation, periodic reporting of Package
-details and IP address of installation to SnertSoft, remote license
-verification by SnertSoft, or other future technical means. Any
-information reported to or gathered by SnertSoft shall remain strictly
-confidential and the private property of SnertSoft. Under no
-circumstances will SnertSoft resell or release this information to third
-parties, unless demanded by court order.
-</p>
-
-<a name="Support"></a>
-<h3>Support</h3>
-
-<p>
-Support is only provided for the Author's original Package. Priority
-support can be purchased. Free support is limited, based on the Author's
-availability, though enhancements requests and problem reports are welcome.
-A community mailing list is available; please refer to
-<a href="http://www.snertsoft.com/">SnertSoft</a> web site Support area for details.
-</p>
-
-<!-- end License Agreement -->
-
-<a name="Gifts"></a>
-<h3>Gifts</h3>
-
-<p>
-Gifts from the author's <a href="http://www.amazon.com/">Amazon US</a> or <a href="http://www.amazon.co.uk/">Amazon UK</a> wishlist (search by mail address &lt;achowe
-at snert dot com&gt;) are welcomed for the continued encouragement, moral support, and ego pumping needed to work in
-foreign non-english speaking lands.
-</p>
-
-<div align="center">
-<br/>
-<a href="#">Description &amp; Usage</a> &deg;
-<a href="#Installation">Installation &amp; Notes</a> &deg;
-<a href="#License">License &amp; Support</a>
-</div>
-
-<!-- copyright -->
-<p class="copyright" style="text-align: center;">
-<nobr>@package_copyright@</nobr>
-</p>
-<!--end copyright-->
-
-<p class="small" style="text-align: center;">
-<!--#include virtual="/cgi-bin/counter.cgi/sendmail/@PACKAGE_NAME@/counter.dat" -->
-inches since 1 September 2003
-</p>
 
 </td></tr>
 </table>
